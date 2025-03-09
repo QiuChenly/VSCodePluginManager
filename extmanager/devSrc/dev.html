@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Extension Manager</title>
+    <style>
+      body {
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+      }
+      #main {
+        border: none;
+        flex: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <iframe id="main" src="http://localhost:5173"></iframe>
+    <script>
+      // 获取 VSCode API
+      const vscode = acquireVsCodeApi();
+      let main = document.getElementById("main").contentWindow;
+
+      console.log("main", main);
+
+      // 监听来自 Webview 的消息
+      window.addEventListener("message", (event) => {
+        const message = event.data;
+        console.log("收到后台消息", event, message);
+        const forward = message["forward"];
+        if (forward) vscode.postMessage(message);
+        else main.postMessage(message, "*");
+      });
+    </script>
+  </body>
+</html>
